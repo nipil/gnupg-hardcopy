@@ -37,13 +37,10 @@ fi
 echo "==== STEP 1 : ask for your passphrase to print it to hardcopy" >&2
 read -r -p "Please enter your passphrase so it can be appened to the hardcopy : " PASS
 
-# remove newline from end of passphrase dur to bash's read
-echo "${PASS}" | hd
-
 # generate a temporary file for the revocation part
 echo "==== STEP 2 : generate a revocation certificate" >&2
 TMP="$(tempfile)"
-gpg --passphrase "${PASS}" --gen-revoke "${KEY}" > "${TMP}"
+gpg --no-use-agent --passphrase "${PASS}" --gen-revoke "${KEY}" > "${TMP}"
 
 # check that we actually generated something (if user aborts in gpg, it exits with 0)
 if [[ ! -s "${TMP}" ]]
@@ -60,7 +57,7 @@ gpg -k --fingerprint "${KEY}"
 gpg -K --fingerprint "${KEY}"
 
 echo -e "\nPassphrase dump:\n"
-echo "${PASS}" | hd
+echo -n "${PASS}" | hd
 
 echo -e "\nRevocation certificate (ascii with control checksums):\n"
 cat "${TMP}" | while read n; do echo -e -n "${n}\t"; echo "${n}"|cksum; done
