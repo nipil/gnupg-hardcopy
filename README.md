@@ -2,6 +2,8 @@
 
 Generates a full hardcopy from a key, with checksomes to help with disaster-recovery
 
+That's the same goal as the `paperkey` tool, but (imho) better and more resilient :-)
+
 # usage
 
 Step 1 : generate a hardcopy of your key :

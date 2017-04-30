@@ -33,13 +33,18 @@ then
 	exit 1
 fi
 
-# ask for passphrase to save it in hardcopy
+# ask for passphrase to save it in hardcopy which will be used to generate revocation too
 echo "==== STEP 1 : ask for your passphrase to print it to hardcopy" >&2
 read -r -p "Please enter your passphrase so it can be appened to the hardcopy : " PASS
 
 # generate a temporary file for the revocation part
 echo "==== STEP 2 : generate a revocation certificate" >&2
 TMP="$(tempfile)"
+
+# the reason we do *NOT* use the agent *AND* provide the passphrase
+# on the command-line (which is a security concern on multi-user system)
+# is that in doing so we ENSURE that the provided passphrase (which will
+# be saved into hardcopy) actually WORKS at the time of archiving
 gpg --no-use-agent --passphrase "${PASS}" --gen-revoke "${KEY}" > "${TMP}"
 
 # check that we actually generated something (if user aborts in gpg, it exits with 0)
